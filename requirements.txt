@@ -1,0 +1,2 @@
+PyPDF2>=3.0.0  # Replace with the specific version you're using, if needed
+pycryptodome>=3.10.1  # Replace with the specific version you're using, if needed
