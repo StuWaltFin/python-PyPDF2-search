@@ -2,6 +2,15 @@
 import PyPDF2
 import re
 import os
+import sys
+
+# Prints how far each query has searched in the pdf
+def progress_bar(current, total, bar_length=40):
+    progress = current / total
+    block = int(round(bar_length * progress))
+    text = f"\rProgress: [{'#' * block}{'-' * (bar_length - block)}] {progress * 100:.2f}%"
+    sys.stdout.write(text)
+    sys.stdout.flush()
 
 # Get a valid PDF file path
 def get_valid_pdf_path():
@@ -31,18 +40,20 @@ def search_pdf(reader, search_terms, num_pages):
             page_text = page.extract_text() or ""  # Default to empty string if text extraction fails (idk this seemed to work so we keep it)
             
             # Search for the term using regex (case-insensitive)
-            match = re.search(rf'\b{term}\b', page_text, re.IGNORECASE)
-            
-            if match:
+            matches = re.findall(rf'\b{term}\b', page_text, re.IGNORECASE)
+            if matches:
                 term_found = True
-                term_counts[term] += len(match) # incrememt by one each time we find a match
+                term_counts[term] += len(matches)  # Increment by the number of matches foundh
                 # Get a snippet around the match (50 characters before and after)
-                start = max(0, match.start() - 50)
-                end = min(len(page_text), match.end() + 50)
-                snippet = page_text[start:end].replace('\n', ' ')  # Replace newlines with spaces
-                
-                print(f"Found '{term}' on page {i + 1}:")
-                print(f"...{snippet}...")
+                # Get a snippet around the first match (50 characters before and after)
+                first_match = re.search(rf'\b{term}\b', page_text, re.IGNORECASE)
+                if first_match:
+                    start = max(0, first_match.start() - 50)
+                    end = min(len(page_text), first_match.end() + 50)
+                    snippet = page_text[start:end].replace('\n', ' ')  # Replace newlines with spaces
+                    
+                    print(f"Found '{term}' on page {i + 1}:")
+                    print(f"...{snippet}...")
         
         if not term_found:
             print(f"'{term}' not found in the document.")
@@ -80,7 +91,7 @@ def main():
     for term, count in term_counts.items():
         if count == 0:
             print(f"'No instances of {term} found in PDF")
-        print(f"'{term} found {count} times")
+        print(f"'{term}' found {count} times")
 
 
 if __name__ == "__main__":
