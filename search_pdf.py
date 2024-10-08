@@ -35,6 +35,7 @@ def search_pdf(reader, search_terms, num_pages):
             
             if match:
                 term_found = True
+                term_counts[term] += len(match) # incrememt by one each time we find a match
                 # Get a snippet around the match (50 characters before and after)
                 start = max(0, match.start() - 50)
                 end = min(len(page_text), match.end() + 50)
@@ -45,6 +46,7 @@ def search_pdf(reader, search_terms, num_pages):
         
         if not term_found:
             print(f"'{term}' not found in the document.")
+    return term_counts 
 
 def main():
     pdf_path = get_valid_pdf_path()
@@ -71,7 +73,15 @@ def main():
             print(f"'{usr_input}' was already found in search terms.")
 
     # Call the function to search terms in the PDF
-    search_pdf(reader, search_terms, num_pages)
+    term_counts = search_pdf(reader, search_terms, num_pages)
+
+    # Print summary of search
+    print("\n Search summary:")
+    for term, count in term_counts.items():
+        if count == 0:
+            print(f"'No instances of {term} found in PDF")
+        print(f"'{term} found {count} times")
+
 
 if __name__ == "__main__":
     main()
