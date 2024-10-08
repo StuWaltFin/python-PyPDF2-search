@@ -40,20 +40,21 @@ def search_pdf(reader, search_terms, num_pages):
             page_text = page.extract_text() or ""  # Default to empty string if text extraction fails (idk this seemed to work so we keep it)
             
             # Search for the term using regex (case-insensitive)
-            matches = re.findall(rf'\b{term}\b', page_text, re.IGNORECASE)
+            matches = list(re.finditer(rf'\b{term}\b', page_text, re.IGNORECASE))
             if matches:
                 term_found = True
                 term_counts[term] += len(matches)  # Increment by the number of matches foundh
                 # Get a snippet around the match (50 characters before and after)
                 # Get a snippet around the first match (50 characters before and after)
-                first_match = re.search(rf'\b{term}\b', page_text, re.IGNORECASE)
-                if first_match:
-                    start = max(0, first_match.start() - 50)
-                    end = min(len(page_text), first_match.end() + 50)
+                for match in matches:
+                    start = max(0, match.start() - 50)
+                    end = min(len(page_text), match.end() + 50)
                     snippet = page_text[start:end].replace('\n', ' ')  # Replace newlines with spaces
                     
                     print(f"Found '{term}' on page {i + 1}:")
                     print(f"...{snippet}...")
+
+            progress_bar(i + 1, num_pages)
         
         if not term_found:
             print(f"'{term}' not found in the document.")
