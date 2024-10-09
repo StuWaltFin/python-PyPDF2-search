@@ -26,3 +26,22 @@ You can install the required packages using the provided `requirements.txt` file
 
 ```bash
 pip install -r requirements.txt
+```
+## Usage
+1. Run the script
+```bash
+python search_pdf.py
+```
+2. When prompted, give full filepath to PDF you want read
+3. After os.path validation, enter terms you want to search for. Type "done" when you're finished entering, and you'll be prompted for confirmation (you can abort with any other input)
+4. It will start to search (pretty slowly, dw its working), and found instances of each term will display their appropriate page number, and a snippet of its surrounding text
+
+## Example
+```bash
+Filepath of PDF to read: /path/to/your/file.pdf
+Type a term to search for: cybersecurity
+Type a term to search for: threat
+Type a term to search for: done
+```
+
+
