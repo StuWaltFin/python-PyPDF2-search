@@ -175,24 +175,6 @@ def main():
 
     # Get number of pages
     num_pages = len(reader.pages)
-
-    # Search for strings
-    search_terms = []
-    while True:
-        usr_input = input("Type a term to search for: (or 'done' to finish) ")
-        usr_input = usr_input.lower()  # Make it lowercase for uniformity
-        if usr_input == "done":
-            confirm = input("Confirm? [Y/n]: ").strip().lower()
-            if confirm in ["y", ""]:
-                break 
-            else:
-                print("Confirmation aborted.")
-                continue       
-        if usr_input not in search_terms:
-            search_terms.append(usr_input)
-        else:
-            print(f"'{usr_input}' was already found in search terms.")
-
     # Call the function to search terms in the PDF
     search_pdf(reader, search_terms, num_pages)
 
