@@ -196,7 +196,7 @@ def main():
     print("\n Search summary:")
     for term, count in term_counts.items():
         if count == 0:
-            print(f"'No instances of {term} found in PDF")
+            print(f"No instances of '{term}' found in PDF")
         print(f"'{term}' found {count} times")
 
 
