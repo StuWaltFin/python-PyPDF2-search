@@ -38,7 +38,7 @@ python search_pdf.py
 5. It will start to search (see progress bar for completion percentage for each term), and found instances of each term will display their appropriate page numbers. 
 
 ## Example
-```bash
+```
 Selected path/to/your/file.pdf!
 Type a term to search for: (or 'done' to finish) cybersecurity
 Type a term to search for: (or 'done' to finish) threat
@@ -48,6 +48,14 @@ Type a term to search for: (or 'done' to finish) done
 Confirm? [Y/n]: y
 Searching for 'cybersecurity'...
 Progress: [########################################] 100.00%
+Searching for 'threat'...
+Progress: [########################################] 100.00%
+cybersecurity
+        Found 4 times
+        On pages 3, 7, 10, 11
+threat
+        Found 6 times
+        On pages 1, 3, 10, 12, 15, 16
 ```
 
 
