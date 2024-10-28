@@ -4,10 +4,10 @@ A command-line tool for searching terms in PDF documents. This tool allows users
 
 ## Features
 
-- Validate PDF file paths before processing.
-- Search for multiple terms in a PDF document.
-- Display page numbers and snippets for each term found.
-- Count total occurrences of each term in the document.
+- Add PDFs and TXT files to pre-made folders in the project, to search locally
+- OR type in absolute paths of PDFs and TXT files
+- Count total occurrences of each term found in a giben PDF
+- See page numbers of each instance of page numbers
 
 ## Requirements
 
@@ -32,16 +32,22 @@ pip install -r requirements.txt
 ```bash
 python search_pdf.py
 ```
-2. When prompted, give full filepath to PDF you want read
-3. After os.path validation, enter terms you want to search for. Type "done" when you're finished entering, and you'll be prompted for confirmation (you can abort with any other input)
-4. It will start to search (pretty slowly, dw its working), and found instances of each term will display their appropriate page number, and a snippet of its surrounding text
+2. When prompted, either pick to search PDFs in the the local directory called "pdfs", or type in an absolute path
+3. Same as step 2, provide TXT file or type in terms in the CLI
+4. If you're typing terms in the CLI, type "done" when you're finished entering, and you'll be prompted for confirmation (you can abort with any other input)
+5. It will start to search (see progress bar for completion percentage for each term), and found instances of each term will display their appropriate page numbers. 
 
 ## Example
 ```bash
-Filepath of PDF to read: /path/to/your/file.pdf
-Type a term to search for: cybersecurity
-Type a term to search for: threat
-Type a term to search for: done
+Selected path/to/your/file.pdf!
+Type a term to search for: (or 'done' to finish) cybersecurity
+Type a term to search for: (or 'done' to finish) threat
+Type a term to search for: (or 'done' to finish) threat
+'threat' was already found in search terms.
+Type a term to search for: (or 'done' to finish) done
+Confirm? [Y/n]: y
+Searching for 'threat'...
+Progress: [########################################] 100.00%
 ```
 
 
