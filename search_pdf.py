@@ -12,6 +12,9 @@ def progress_bar(current, total, bar_length=40):
     text = f"\rProgress: [{'#' * block}{'-' * (bar_length - block)}] {progress * 100:.2f}%"
     sys.stdout.write(text)
     sys.stdout.flush()
+    progress = current / total    
+    if current == total: 
+        print() # Ensure a newline at the end
 
 # ------------------------- STEP ONE -------------------------
 # OPTION I - get PDF filepath (option one) [NOT working]
@@ -20,7 +23,7 @@ def type_pdf_filepath():
         pdf_path = input("Filepath of PDF to read (or 'back' to abort): ")
         # Check for existence
         if pdf_path.lower() == "back":
-            print("Aborting to menu...\n")
+            print("Aborting to menu...\n\n")
             return None
         if not os.path.exists(pdf_path):
             print("Error: File not found. Please try again.\n")
@@ -33,10 +36,10 @@ def type_pdf_filepath():
     
 # OPTION II - get PDF filepaths in directory [WORKING]
 def get_pdfs_in_directory():
-    pdf_list = glob.glob("*.pdf")
+    pdf_list = glob.glob("pdfs/*.pdf")
     # check if there was anything returned at all
     if not pdf_list:
-        print("No PDFs found in this directory (aborting to menu...)\n")
+        print("No PDFs found in this directory (aborting to menu...)\n\n")
         return None
 
     # Prompt user to select a PDF
@@ -49,8 +52,11 @@ def get_pdfs_in_directory():
             print(f"{i}) {pdf}")
 
         print()
-        usr_input = input("So uhhhh, what'll it be chief? (type a single number): ")
+        usr_input = input("Which PDF would you like to search? (type a single number, or 'back'): ")
         # validate user input with try and except
+        if usr_input.lower() == "back":
+            print("Aborting to menu...\n\n")
+            return None
         try:
             val = int(usr_input)
         except ValueError:
@@ -92,14 +98,14 @@ def type_terms():
 # Helper function, parse txt contents and dispaly terms extracted
 def get_txts_in_directory():
     print("NOTE: this program accepts .txt files of key terms, seperated by a comma")
-    print("Example - confidentiality, integrity, availibitliy (end of file)")
+    print("Example -> confidentiality, integrity, availibitliy (end of file)")
     print("If a read .txt file is not in this format, this step will abort to the user menu\n")
     
-    txt_list = glob.glob("*.txt")
+    txt_list = glob.glob("txt_terms/*.txt")
     
     # check if there was anything returned at all
     if not txt_list:
-        print("No TXTs found in this directory (aborting to menu...)\n")
+        print("No TXTs found in this directory (aborting to menu...)\n\n")
         return None
     
     while True:
@@ -107,10 +113,10 @@ def get_txts_in_directory():
         i = 0
         for txt in txt_list:
             i += 1
-            print(f"{i}) - {txt}")
+            print(f"{i}) {txt}")
 
         print("")
-        usr_input = input("So uhhhh, what'll it be chief?: ")
+        usr_input = input("What TXT file would you like to use as search terms? (Type a single number): ")
         
         # validate user input with try and except
         try:
@@ -142,6 +148,7 @@ def get_txts_in_directory():
 # --------------------- SEARCH FUNCTION ---------------------
 def search_pdf(reader, search_terms, num_pages):
     # dictionary to count total instances for each term (bc why not maybe you wanna know)
+    term_pages = {term: [] for term in search_terms}
     term_counts = {term: 0 for term in search_terms}
     for term in search_terms:
         print(f"\nSearching for '{term}'...")
@@ -151,7 +158,8 @@ def search_pdf(reader, search_terms, num_pages):
             # Extract text from page
             page = reader.pages[i]
             page_text = page.extract_text() or ""  # Default to empty string if text extraction fails (idk this seemed to work so we keep it)
-            
+            term_pages[term].append(i + 1) # Save the page number found to a dictionary to print it out at end
+
             # Search for the term using regex (case-insensitive)
             matches = list(re.finditer(rf'\b{term}\b', page_text, re.IGNORECASE))
             if matches:
@@ -171,20 +179,20 @@ def search_pdf(reader, search_terms, num_pages):
         
         if not term_found:
             print(f"'{term}' not found in the document.")
-    return term_counts 
+    return term_counts, term_pages
 
 # --------------------- USER MENU ---------------------
 def user_menu():
     # STEP ONE - get pdf method, then path
     while True:
         print(" ------ Step one - type PDF filepath, or select filepath from list ------")
-        print("1) Type PDF filepath")
-        print("2) View usable PDFs in current directory\n")
+        print("1) View usable PDFs in this project directory")
+        print("2) Type PDF filepath\n")
         usr_input_pdf = input("Select an option: ")
         if usr_input_pdf == "1":
-            pdf_path = type_pdf_filepath()
-        elif usr_input_pdf == "2":
             pdf_path = get_pdfs_in_directory()
+        elif usr_input_pdf == "2":
+            pdf_path = type_pdf_filepath()
         else:
             print("Invalid input - try again\n")
             continue
@@ -211,20 +219,20 @@ def user_menu():
 def main():
     pdf_path, search_terms = user_menu()
     reader = PyPDF2.PdfReader(pdf_path)
-
     # Get number of pages
     num_pages = len(reader.pages)
-    
     # Call the function to search terms in the PDF
-    term_counts = search_pdf(reader, search_terms, num_pages)
-
+    term_counts, term_pages = search_pdf(reader, search_terms, num_pages)
     # Print summary of search
-    print("\n Search summary:")
+    print("\n ------------ Search summary ------------")
+
     for term, count in term_counts.items():
         if count == 0:
             print(f"No instances of '{term}' found in PDF")
-        print(f"'{term}' found {count} times")
-
+        print(term)
+        print(f"\tFound {count} times")
+        pages = ', '.join(map(str, term_pages[term]))
+        print(f"\tOn pages {pages}")
 
 if __name__ == "__main__":
     main()
