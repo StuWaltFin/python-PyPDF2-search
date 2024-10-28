@@ -88,9 +88,15 @@ def type_terms():
             print(f"'{usr_input}' was already found in search terms.")
 
 # OPTION II - use TXT document to get terms [UNTESTED]
-# FIXME parsing and input validation is going to be a hoot but we'll give it a shot
+
+# Helper function, parse txt contents and dispaly terms extracted
 def get_txts_in_directory():
+    print("NOTE: this program accepts .txt files of key terms, seperated by a comma")
+    print("Example - confidentiality, integrity, availibitliy (end of file)")
+    print("If a read .txt file is not in this format, this step will abort to the user menu\n")
+    
     txt_list = glob.glob("*.txt")
+    
     # check if there was anything returned at all
     if not txt_list:
         print("No TXTs found in this directory (aborting to menu...)\n")
@@ -103,16 +109,35 @@ def get_txts_in_directory():
             i += 1
             print(f"{i}) - {txt}")
 
-        print("\n")
+        print("")
         usr_input = input("So uhhhh, what'll it be chief?: ")
-        # validate user input
-        if 0 < usr_input <= len(txt_list):
-            print(f"Selected {txt_list[usr_input]}!")
-            txt_path = txt_path[usr_input]
+        
+        # validate user input with try and except
+        try:
+            val = int(usr_input)
+        except ValueError:
+            print("\nERROR: Invalid input, try again")
+            continue 
+
+        if 0 < val <= len(txt_list):
+            txt_path = txt_list[val - 1]
+            print(f"Selected {txt_list[val - 1]}!\n\n")
+            
+            # read text
+            with open(txt_path, "r") as file:
+                content = file.read()
+                terms = [term.strip() for term in content.split(",")]
+
+                # remove duplicates
+                terms = list(set(terms))
+
+                print("TESTING - parsed terms")
+                print(terms)
+
+            return terms
         else:
             print("\nInput invalid - type number within range of list")
             continue
-        return txt_path
 
 # --------------------- SEARCH FUNCTION ---------------------
 def search_pdf(reader, search_terms, num_pages):
@@ -189,6 +214,7 @@ def main():
 
     # Get number of pages
     num_pages = len(reader.pages)
+    
     # Call the function to search terms in the PDF
     term_counts = search_pdf(reader, search_terms, num_pages)
 
@@ -196,7 +222,7 @@ def main():
     print("\n Search summary:")
     for term, count in term_counts.items():
         if count == 0:
-            print(f"'No instances of {term} found in PDF")
+            print(f"No instances of '{term}' found in PDF")
         print(f"'{term}' found {count} times")
 
 
