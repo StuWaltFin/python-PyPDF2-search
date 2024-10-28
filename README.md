@@ -50,6 +50,7 @@ Searching for 'cybersecurity'...
 Progress: [########################################] 100.00%
 Searching for 'threat'...
 Progress: [########################################] 100.00%
+ ------------ Search summary ------------
 cybersecurity
         Found 4 times
         On pages 3, 7, 10, 11
