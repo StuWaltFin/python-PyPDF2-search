@@ -46,7 +46,7 @@ Type a term to search for: (or 'done' to finish) threat
 'threat' was already found in search terms.
 Type a term to search for: (or 'done' to finish) done
 Confirm? [Y/n]: y
-Searching for 'threat'...
+Searching for 'cybersecurity'...
 Progress: [########################################] 100.00%
 ```
 
